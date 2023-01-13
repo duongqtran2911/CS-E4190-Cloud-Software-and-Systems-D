@@ -1,0 +1,218 @@
+openapi: 3.0.3
+info:
+  title: Photo API
+  description: API design with OpenAPI
+  version: 0.0.1
+
+paths:
+  /photo:
+    post:
+      summary: Create a photo.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Photo'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+              example:
+                message: Photo successfully created
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /photos:
+    get:
+      summary: Return a list of photos.
+      # description: Returns photos.
+      parameters:
+        - name: access
+          in: query
+          required: True
+          schema: 
+            $ref: '#/components/schemas/Photos'
+      responses:
+        '200':
+          description: a JSON array of photos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Photos'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /photo/{photo_id}:
+    get:
+      summary: Return a photo by ID.
+      parameters:
+        - in: path
+          name: photo_id
+          required: true
+          description: The ID of the queried photo.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A photo object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update a photo by ID.
+      parameters:
+        - in: path
+          name: photo_id
+          required: true
+          description: The ID of the photo to be updated.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Photo'
+      responses:
+        '200':
+          description: Photo successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete a photo by ID.
+      parameters:
+        - in: path
+          name: photo_id
+          required: true
+          description: The ID of the photo to be deleted.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+components:
+  schemas:
+    Photo:
+      title: Photo
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: True
+        name:
+          type: string
+          maxLength: 20
+        description:
+          type: string
+          maxLength: 100
+        access:
+          type: string
+          enum:
+            - public
+            - private
+        location:
+          type: string
+        file:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+        modified_date:
+          type: string
+          format: date-time
+      required:
+        - name
+        - access
+        - location
+        - file
+        - created_date
+        - modified_date
+    Photos:
+      title: Photos
+      type: array
+      description: An array of photos
+      items:
+        $ref: '#/components/schemas/Photo'
+    Success:
+      type: object
+      properties:
+        message:
+          type: string
+        id:
+          type: string
+    Error:
+      properties:
+        message:
+          type: string
+      example:
+        message: Error

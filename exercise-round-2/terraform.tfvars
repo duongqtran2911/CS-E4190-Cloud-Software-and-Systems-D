@@ -1,0 +1,1 @@
+vm_name_input = "exercise-2-vm"
